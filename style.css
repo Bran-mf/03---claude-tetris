@@ -213,3 +213,36 @@ kbd {
 #restart-btn:hover {
   background: var(--color-btn-hover);
 }
+
+/* ---- Skin select ---- */
+.skin-select {
+  background: var(--color-kbd-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 5px 8px;
+  font-size: 11px;
+  font-family: inherit;
+  letter-spacing: 1px;
+  color: var(--color-label);
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.15s, color 0.15s, border-color 0.2s;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.skin-select:hover {
+  background: var(--color-kbd-bg);
+  color: var(--color-text);
+}
+
+.skin-select:focus {
+  outline: 1px solid var(--color-accent);
+}
+
+/* ---- Neon skin overrides ---- */
+body.skin-neon {
+  --color-bg: #000000;
+  --color-surface: #000000;
+  --color-grid: #111111;
+}
