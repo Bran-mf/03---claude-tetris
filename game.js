@@ -16,6 +16,62 @@ const COLORS = [
   '#37474f', // 8 - bomb (dark slate)
 ];
 
+// ---- Skin system ----
+const SKIN_PALETTES = {
+  retro: COLORS,
+  neon: COLORS,  // same palette as base; visual difference is glow rendering
+  pastel: [
+    null,
+    '#b5ead7', // I - mint
+    '#ffdac1', // O - peach
+    '#c7ceea', // T - lavender
+    '#e2f0cb', // S - soft lime
+    '#ffb7b2', // Z - salmon pink
+    '#b5d5ff', // J - baby blue
+    '#ffe0b5', // L - light orange
+    '#37474f', // 8 - bomb (keep original)
+  ],
+  pixel: COLORS,
+};
+
+let activeSkin = localStorage.getItem('tetris.skin') || 'retro';
+
+function applyNeonBodyClass() {
+  if (activeSkin === 'neon') {
+    document.body.classList.add('skin-neon');
+  } else {
+    document.body.classList.remove('skin-neon');
+  }
+}
+
+function getSkinColor(colorIndex) {
+  const palette = SKIN_PALETTES[activeSkin] || SKIN_PALETTES.retro;
+  return palette[colorIndex] || COLORS[colorIndex];
+}
+
+function drawRoundRect(context, x, y, width, height, radius) {
+  if (context.roundRect) {
+    context.beginPath();
+    context.roundRect(x, y, width, height, radius);
+    context.fill();
+  } else {
+    // Fallback using arcs
+    const r = Math.min(radius, width / 2, height / 2);
+    context.beginPath();
+    context.moveTo(x + r, y);
+    context.lineTo(x + width - r, y);
+    context.arcTo(x + width, y, x + width, y + r, r);
+    context.lineTo(x + width, y + height - r);
+    context.arcTo(x + width, y + height, x + width - r, y + height, r);
+    context.lineTo(x + r, y + height);
+    context.arcTo(x, y + height, x, y + height - r, r);
+    context.lineTo(x, y + r);
+    context.arcTo(x, y, x + r, y, r);
+    context.closePath();
+    context.fill();
+  }
+}
+
 const PIECES = [
   null,
   [[0,0,0,0],[1,1,1,1],[0,0,0,0],[0,0,0,0]], // I
@@ -199,7 +255,7 @@ function updateHUD() {
 
 function drawBlock(context, x, y, colorIndex, size, alpha) {
   if (!colorIndex) return;
-  const color = COLORS[colorIndex];
+  const color = getSkinColor(colorIndex);
   context.globalAlpha = alpha ?? 1;
 
   if (colorIndex === 8) {
@@ -207,28 +263,75 @@ function drawBlock(context, x, y, colorIndex, size, alpha) {
     const px = x * size + 1;
     const py = y * size + 1;
     const s = size - 2;
-    context.fillStyle = color;
+    context.fillStyle = COLORS[8];
     context.fillRect(px, py, s, s);
     // bomb body circle
-    const cx = px + s / 2;
-    const cy = py + s / 2 + s * 0.05;
-    const r = s * 0.32;
+    const bcx = px + s / 2;
+    const bcy = py + s / 2 + s * 0.05;
+    const br = s * 0.32;
     context.beginPath();
-    context.arc(cx, cy, r, 0, Math.PI * 2);
+    context.arc(bcx, bcy, br, 0, Math.PI * 2);
     context.fillStyle = '#1a2a2a';
     context.fill();
     // highlight on circle
     context.beginPath();
-    context.arc(cx - r * 0.28, cy - r * 0.28, r * 0.25, 0, Math.PI * 2);
+    context.arc(bcx - br * 0.28, bcy - br * 0.28, br * 0.25, 0, Math.PI * 2);
     context.fillStyle = 'rgba(255,255,255,0.3)';
     context.fill();
     // fuse spark
     context.beginPath();
-    context.arc(cx + r * 0.5, py + s * 0.12, r * 0.18, 0, Math.PI * 2);
+    context.arc(bcx + br * 0.5, py + s * 0.12, br * 0.18, 0, Math.PI * 2);
     context.fillStyle = '#ffcc00';
     context.fill();
+  } else if (activeSkin === 'neon') {
+    // Neon: glow effect
+    context.shadowBlur = 12;
+    context.shadowColor = color;
+    context.fillStyle = color;
+    context.fillRect(x * size + 1, y * size + 1, size - 2, size - 2);
+    context.shadowBlur = 0;
+    context.shadowColor = 'transparent';
+  } else if (activeSkin === 'pastel') {
+    // Pastel: rounded corners
+    const px = x * size + 2;
+    const py = y * size + 2;
+    const s = size - 4;
+    context.fillStyle = color;
+    drawRoundRect(context, px, py, s, s, 5);
+    // soft highlight
+    context.fillStyle = 'rgba(255,255,255,0.25)';
+    drawRoundRect(context, px, py, s, Math.floor(s * 0.3), 5);
+  } else if (activeSkin === 'pixel') {
+    // Pixel art: internal grid texture
+    const px = x * size + 1;
+    const py = y * size + 1;
+    const s = size - 2;
+    context.fillStyle = color;
+    context.fillRect(px, py, s, s);
+    // Draw internal 4x4 mini-pixel grid with alternating darkened cells
+    const gridSize = 4;
+    const cellW = s / gridSize;
+    const cellH = s / gridSize;
+    // Darken helper: parse hex and darken
+    const darkColor = darkenColor(color, 0.25);
+    for (let gr = 0; gr < gridSize; gr++) {
+      for (let gc = 0; gc < gridSize; gc++) {
+        if ((gr + gc) % 2 === 1) {
+          context.fillStyle = darkColor;
+          context.fillRect(
+            px + gc * cellW,
+            py + gr * cellH,
+            cellW,
+            cellH
+          );
+        }
+      }
+    }
+    // highlight strip at top
+    context.fillStyle = 'rgba(255,255,255,0.12)';
+    context.fillRect(px, py, s, 3);
   } else {
-    // Normal block
+    // Retro (default): flat fill with highlight
     context.fillStyle = color;
     context.fillRect(x * size + 1, y * size + 1, size - 2, size - 2);
     // highlight
@@ -237,6 +340,17 @@ function drawBlock(context, x, y, colorIndex, size, alpha) {
   }
 
   context.globalAlpha = 1;
+}
+
+function darkenColor(hex, amount) {
+  // Parse #rrggbb and return a darkened version
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  const dr = Math.max(0, Math.floor(r * (1 - amount)));
+  const dg = Math.max(0, Math.floor(g * (1 - amount)));
+  const db = Math.max(0, Math.floor(b * (1 - amount)));
+  return `rgb(${dr},${dg},${db})`;
 }
 
 function drawGrid() {
@@ -376,6 +490,24 @@ restartBtn.addEventListener('click', init);
 themeBtn.addEventListener('click', () => {
   const isLight = document.body.classList.toggle('light');
   themeBtn.textContent = isLight ? 'Dark' : 'Light';
+});
+
+const skinSelect = document.getElementById('skin-select');
+skinSelect.value = activeSkin;
+applyNeonBodyClass();
+
+skinSelect.addEventListener('change', () => {
+  activeSkin = skinSelect.value;
+  localStorage.setItem('tetris.skin', activeSkin);
+  applyNeonBodyClass();
+  // Always redraw both canvases so they stay in sync with the new skin,
+  // even after game over. draw() only reads board/current/ghost (all valid
+  // after game ends). Skip only when paused with game still running, since
+  // the overlay is up and the board hasn't changed.
+  if (!paused || gameOver) {
+    draw();
+  }
+  drawNext();
 });
 
 init();
