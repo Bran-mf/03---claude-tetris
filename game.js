@@ -53,8 +53,24 @@ const overlayTitle = document.getElementById('overlay-title');
 const overlayScore = document.getElementById('overlay-score');
 const restartBtn = document.getElementById('restart-btn');
 const themeBtn = document.getElementById('theme-btn');
+const pauseMenu = document.getElementById('pause-menu');
+const pauseResumeBtn = document.getElementById('pause-resume-btn');
+const pauseRestartBtn = document.getElementById('pause-restart-btn');
+const pauseControlsBtn = document.getElementById('pause-controls-btn');
+const pauseControlsPanel = document.getElementById('pause-controls-panel');
+const pauseStartLevel = document.getElementById('pause-start-level');
 
 let board, current, next, score, lines, level, paused, gameOver, lastTime, dropAccum, dropInterval, animId;
+let startLevel = 1;
+
+// Populate level selector (1–15)
+for (let i = 1; i <= 15; i++) {
+  const opt = document.createElement('option');
+  opt.value = i;
+  opt.textContent = i;
+  pauseStartLevel.appendChild(opt);
+}
+pauseStartLevel.value = startLevel;
 
 function createBoard() {
   return Array.from({ length: ROWS }, () => new Array(COLS).fill(0));
@@ -134,7 +150,7 @@ function clearLines() {
   if (cleared) {
     lines += cleared;
     score += (LINE_SCORES[cleared] || 0) * level;
-    level = Math.floor(lines / 10) + 1;
+    level = startLevel + Math.floor(lines / 10);
     dropInterval = Math.max(100, 1000 - (level - 1) * 90);
     updateHUD();
   }
@@ -294,6 +310,8 @@ function endGame() {
   cancelAnimationFrame(animId);
   overlayTitle.textContent = 'GAME OVER';
   overlayScore.textContent = `Puntuación: ${score.toLocaleString()}`;
+  restartBtn.classList.remove('hidden');
+  pauseMenu.classList.add('hidden');
   overlay.classList.remove('hidden');
 }
 
@@ -301,12 +319,17 @@ function togglePause() {
   if (gameOver) return;
   paused = !paused;
   if (!paused) {
+    overlay.classList.add('hidden');
+    pauseMenu.classList.add('hidden');
+    pauseControlsPanel.classList.add('hidden');
     lastTime = performance.now();
     loop(lastTime);
   } else {
     cancelAnimationFrame(animId);
     overlayTitle.textContent = 'PAUSA';
     overlayScore.textContent = '';
+    restartBtn.classList.add('hidden');
+    pauseMenu.classList.remove('hidden');
     overlay.classList.remove('hidden');
   }
 }
@@ -328,26 +351,33 @@ function loop(ts) {
   animId = requestAnimationFrame(loop);
 }
 
-function init() {
+function init(lvl) {
+  const sl = (lvl !== undefined) ? lvl : startLevel;
   board = createBoard();
   score = 0;
   lines = 0;
-  level = 1;
+  level = sl;
   paused = false;
   gameOver = false;
-  dropInterval = 1000;
+  dropInterval = Math.max(100, 1000 - (sl - 1) * 90);
   dropAccum = 0;
   lastTime = performance.now();
   next = randomPiece();
   spawn();
   updateHUD();
+  pauseMenu.classList.add('hidden');
+  pauseControlsPanel.classList.add('hidden');
+  restartBtn.classList.remove('hidden');
   overlay.classList.add('hidden');
   cancelAnimationFrame(animId);
   animId = requestAnimationFrame(loop);
 }
 
 document.addEventListener('keydown', e => {
-  if (e.code === 'KeyP') { togglePause(); return; }
+  if (e.code === 'KeyP' || e.code === 'Escape') {
+    if (!gameOver) togglePause();
+    return;
+  }
   if (paused || gameOver) return;
   switch (e.code) {
     case 'ArrowLeft':
@@ -371,7 +401,20 @@ document.addEventListener('keydown', e => {
   updateHUD();
 });
 
-restartBtn.addEventListener('click', init);
+// Game-over restart button
+restartBtn.addEventListener('click', () => init());
+
+// Pause menu buttons
+pauseResumeBtn.addEventListener('click', () => togglePause());
+
+pauseRestartBtn.addEventListener('click', () => {
+  startLevel = parseInt(pauseStartLevel.value, 10);
+  init(startLevel);
+});
+
+pauseControlsBtn.addEventListener('click', () => {
+  pauseControlsPanel.classList.toggle('hidden');
+});
 
 themeBtn.addEventListener('click', () => {
   const isLight = document.body.classList.toggle('light');
