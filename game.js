@@ -13,6 +13,7 @@ const COLORS = [
   '#e57373', // Z - red
   '#90caf9', // J - pale blue
   '#ffb74d', // L - orange
+  '#37474f', // 8 - bomb (dark slate)
 ];
 
 const PIECES = [
@@ -27,6 +28,18 @@ const PIECES = [
 ];
 
 const LINE_SCORES = [0, 100, 300, 500, 800];
+
+// ---- Power-up registry ----
+// Each entry: { color (COLORS index), shape, chance (0-1), onLock(piece) }
+// Add new power-ups here to extend the system.
+const POWERUPS = {
+  bomb: {
+    color: 8,
+    shape: [[8]], // single 1×1 block
+    chance: 0.08, // ~8% per spawn
+    onLock(piece) { explode(piece.x, piece.y); },
+  },
+};
 
 const canvas = document.getElementById('board');
 const ctx = canvas.getContext('2d');
@@ -48,6 +61,20 @@ function createBoard() {
 }
 
 function randomPiece() {
+  // Roll for a power-up first
+  for (const [name, def] of Object.entries(POWERUPS)) {
+    if (Math.random() < def.chance) {
+      const shape = def.shape.map(row => [...row]);
+      return {
+        type: def.color,
+        shape,
+        powerup: name,
+        x: Math.floor(COLS / 2) - Math.floor(shape[0].length / 2),
+        y: 0,
+      };
+    }
+  }
+  // Normal tetromino
   const type = Math.floor(Math.random() * 7) + 1;
   const shape = PIECES[type].map(row => [...row]);
   return { type, shape, x: Math.floor(COLS / 2) - Math.floor(shape[0].length / 2), y: 0 };
@@ -136,8 +163,21 @@ function softDrop() {
   }
 }
 
+function explode(cx, cy) {
+  let destroyed = 0;
+  for (let r = cy - 1; r <= cy + 1; r++)
+    for (let c = cx - 1; c <= cx + 1; c++)
+      if (r >= 0 && r < ROWS && c >= 0 && c < COLS && board[r][c]) {
+        board[r][c] = 0;
+        destroyed++;
+      }
+  score += destroyed * 10;
+  updateHUD();
+}
+
 function lockPiece() {
   merge();
+  if (current.powerup) POWERUPS[current.powerup].onLock(current);
   clearLines();
   spawn();
 }
@@ -161,11 +201,41 @@ function drawBlock(context, x, y, colorIndex, size, alpha) {
   if (!colorIndex) return;
   const color = COLORS[colorIndex];
   context.globalAlpha = alpha ?? 1;
-  context.fillStyle = color;
-  context.fillRect(x * size + 1, y * size + 1, size - 2, size - 2);
-  // highlight
-  context.fillStyle = 'rgba(255,255,255,0.12)';
-  context.fillRect(x * size + 1, y * size + 1, size - 2, 4);
+
+  if (colorIndex === 8) {
+    // Bomb: dark background square + circular body + fuse dot
+    const px = x * size + 1;
+    const py = y * size + 1;
+    const s = size - 2;
+    context.fillStyle = color;
+    context.fillRect(px, py, s, s);
+    // bomb body circle
+    const cx = px + s / 2;
+    const cy = py + s / 2 + s * 0.05;
+    const r = s * 0.32;
+    context.beginPath();
+    context.arc(cx, cy, r, 0, Math.PI * 2);
+    context.fillStyle = '#1a2a2a';
+    context.fill();
+    // highlight on circle
+    context.beginPath();
+    context.arc(cx - r * 0.28, cy - r * 0.28, r * 0.25, 0, Math.PI * 2);
+    context.fillStyle = 'rgba(255,255,255,0.3)';
+    context.fill();
+    // fuse spark
+    context.beginPath();
+    context.arc(cx + r * 0.5, py + s * 0.12, r * 0.18, 0, Math.PI * 2);
+    context.fillStyle = '#ffcc00';
+    context.fill();
+  } else {
+    // Normal block
+    context.fillStyle = color;
+    context.fillRect(x * size + 1, y * size + 1, size - 2, size - 2);
+    // highlight
+    context.fillStyle = 'rgba(255,255,255,0.12)';
+    context.fillRect(x * size + 1, y * size + 1, size - 2, 4);
+  }
+
   context.globalAlpha = 1;
 }
 
