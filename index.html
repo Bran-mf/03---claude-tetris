@@ -24,6 +24,10 @@
           <span class="label">LEVEL</span>
           <span class="value" id="level">1</span>
         </div>
+        <div class="panel-section">
+          <span class="label">MAX COMBO</span>
+          <span class="value" id="max-combo">0</span>
+        </div>
 
         <div class="panel-section">
           <span class="label">NEXT</span>
@@ -69,7 +73,49 @@
       <div class="overlay-box">
         <p id="overlay-title">GAME OVER</p>
         <p id="overlay-score"></p>
-        <button id="restart-btn">Reiniciar</button>
+
+        <!-- High-score entry form (shown after game over) -->
+        <div id="hs-section" class="hs-section hidden">
+          <p class="hs-prompt">¿Guardar puntuación?</p>
+          <input id="hs-name" type="text" class="hs-name-input" maxlength="20" placeholder="Tu nombre" />
+          <div class="hs-btns">
+            <button id="hs-save-btn" class="overlay-btn">Guardar</button>
+            <button id="hs-skip-btn" class="overlay-btn overlay-btn--secondary">Omitir</button>
+          </div>
+        </div>
+
+        <!-- High-score table (shown after saving/skipping) -->
+        <div id="hs-table-section" class="hs-table-section hidden">
+          <p class="label">TABLA DE RECORDS</p>
+          <table class="hs-table">
+            <thead>
+              <tr><th>#</th><th>Nombre</th><th>Puntos</th><th>Líneas</th><th>Fecha</th></tr>
+            </thead>
+            <tbody id="hs-tbody"></tbody>
+          </table>
+        </div>
+
+        <button id="restart-btn" class="overlay-btn">Reiniciar</button>
+
+        <!-- Pause-specific controls (hidden when game over) -->
+        <div id="pause-menu" class="pause-menu hidden">
+          <button id="pause-resume-btn">Reanudar</button>
+          <button id="pause-restart-btn">Reiniciar</button>
+          <button id="pause-controls-btn">Ver controles</button>
+          <div id="pause-controls-panel" class="pause-controls-panel hidden">
+            <ul>
+              <li><kbd>←</kbd><kbd>→</kbd> mover</li>
+              <li><kbd>↑</kbd> / <kbd>X</kbd> rotar</li>
+              <li><kbd>↓</kbd> bajar</li>
+              <li><kbd>Space</kbd> caída dura</li>
+              <li><kbd>P</kbd> / <kbd>Esc</kbd> pausa</li>
+            </ul>
+          </div>
+          <div class="pause-level-row">
+            <label for="pause-start-level">Nivel inicial:</label>
+            <select id="pause-start-level"></select>
+          </div>
+        </div>
       </div>
     </div>
   </div>
