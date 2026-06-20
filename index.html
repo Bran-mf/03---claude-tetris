@@ -55,11 +55,27 @@
       </aside>
     </div>
 
+    <!-- Start overlay (shown on page load) -->
+    <div id="start-overlay" class="overlay">
+      <div class="overlay-box">
+        <p class="overlay-title-text">TETRIS</p>
+        <div id="start-highscores" class="highscores-container"></div>
+        <button id="play-btn" class="overlay-btn">Jugar</button>
+        <button id="reset-scores-btn" class="overlay-btn overlay-btn-secondary">Resetear récords</button>
+      </div>
+    </div>
+
+    <!-- Game over / pause overlay -->
     <div id="overlay" class="overlay hidden">
       <div class="overlay-box">
         <p id="overlay-title">GAME OVER</p>
         <p id="overlay-score"></p>
-        <button id="restart-btn">Reiniciar</button>
+        <div id="save-score-section" class="save-score-section hidden">
+          <input id="player-name" class="player-name-input" type="text" maxlength="20" placeholder="Tu nombre" />
+          <button id="save-btn" class="overlay-btn">Guardar</button>
+        </div>
+        <div id="gameover-highscores" class="highscores-container"></div>
+        <button id="restart-btn" class="overlay-btn">Reiniciar</button>
       </div>
     </div>
   </div>
