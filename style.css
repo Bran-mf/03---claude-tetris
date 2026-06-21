@@ -247,6 +247,7 @@ body.skin-neon {
   --color-grid: #111111;
 }
 
+/* ---- Secondary overlay button ---- */
 .overlay-btn--secondary {
   background: transparent;
   color: var(--color-label);
@@ -258,8 +259,30 @@ body.skin-neon {
   color: var(--color-text);
 }
 
-/* ---- High-score entry ---- */
-.hs-section {
+.overlay-btn-secondary {
+  background: transparent;
+  color: var(--color-label);
+  border: 1px solid var(--color-border);
+  font-weight: 400;
+  font-size: 12px;
+  padding: 6px 18px;
+}
+
+.overlay-btn-secondary:hover {
+  background: var(--color-kbd-bg);
+  color: var(--color-text);
+}
+
+/* ---- Overlay title (start screen) ---- */
+.overlay-title-text {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 4px;
+  color: var(--color-accent);
+}
+
+/* ---- Save score section ---- */
+.save-score-section {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -267,73 +290,85 @@ body.skin-neon {
   width: 100%;
 }
 
-.hs-section.hidden {
+.save-score-section.hidden {
   display: none;
 }
 
-.hs-prompt {
-  font-size: 13px;
-  color: var(--color-text);
-}
-
-.hs-name-input {
-  background: var(--color-kbd-bg);
-  color: var(--color-text);
+.player-name-input {
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: 4px;
-  padding: 6px 10px;
-  font-size: 14px;
+  color: var(--color-text);
   font-family: inherit;
-  width: 180px;
+  font-size: 14px;
+  padding: 6px 12px;
   text-align: center;
+  width: 180px;
+  outline: none;
   transition: border-color 0.15s;
 }
 
-.hs-name-input:focus {
+.player-name-input:focus {
   border-color: var(--color-accent);
-  outline: none;
 }
 
-.hs-btns {
-  display: flex;
-  gap: 8px;
-}
-
-/* ---- High-score table ---- */
-.hs-table-section {
+/* ---- High scores table ---- */
+.highscores-container {
   width: 100%;
   max-width: 340px;
-}
-
-.hs-table-section.hidden {
-  display: none;
+  margin-top: 4px;
 }
 
 .hs-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 12px;
-  margin-top: 6px;
-}
-
-.hs-table th,
-.hs-table td {
-  padding: 4px 8px;
-  text-align: center;
-  border-bottom: 1px solid var(--color-border);
   color: var(--color-text);
 }
 
 .hs-table th {
+  color: var(--color-label);
   font-size: 10px;
   letter-spacing: 1px;
-  color: var(--color-label);
-  font-weight: 600;
+  padding: 4px 6px;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
 }
 
-.hs-table tr:first-child td {
+.hs-table td {
+  padding: 5px 6px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.hs-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.hs-table tbody tr:hover {
+  background: var(--color-kbd-bg);
+}
+
+.hs-table tr.new-record td {
   color: var(--color-accent);
   font-weight: 700;
+}
+
+.hs-empty {
+  font-size: 12px;
+  color: var(--color-label);
+  text-align: center;
+  padding: 8px 0;
+}
+
+.hs-maxlines {
+  font-size: 11px;
+  color: var(--color-label);
+  text-align: right;
+  margin-top: 6px;
+}
+
+.hs-maxlines strong {
+  color: var(--color-text);
 }
 
 /* ---- Pause menu ---- */
