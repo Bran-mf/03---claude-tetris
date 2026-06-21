@@ -196,7 +196,7 @@ kbd {
   color: var(--color-accent);
 }
 
-#restart-btn {
+.overlay-btn {
   margin-top: 8px;
   background: var(--color-btn-bg);
   color: var(--color-btn-text);
@@ -210,6 +210,252 @@ kbd {
   transition: background 0.15s;
 }
 
-#restart-btn:hover {
+.overlay-btn:hover {
   background: var(--color-btn-hover);
+}
+
+/* ---- Skin select ---- */
+.skin-select {
+  background: var(--color-kbd-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 5px 8px;
+  font-size: 11px;
+  font-family: inherit;
+  letter-spacing: 1px;
+  color: var(--color-label);
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.15s, color 0.15s, border-color 0.2s;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.skin-select:hover {
+  background: var(--color-kbd-bg);
+  color: var(--color-text);
+}
+
+.skin-select:focus {
+  outline: 1px solid var(--color-accent);
+}
+
+/* ---- Neon skin overrides ---- */
+body.skin-neon {
+  --color-bg: #000000;
+  --color-surface: #000000;
+  --color-grid: #111111;
+}
+
+/* ---- Secondary overlay button ---- */
+.overlay-btn--secondary {
+  background: transparent;
+  color: var(--color-label);
+  border: 1px solid var(--color-border);
+}
+
+.overlay-btn--secondary:hover {
+  background: var(--color-kbd-bg);
+  color: var(--color-text);
+}
+
+.overlay-btn-secondary {
+  background: transparent;
+  color: var(--color-label);
+  border: 1px solid var(--color-border);
+  font-weight: 400;
+  font-size: 12px;
+  padding: 6px 18px;
+}
+
+.overlay-btn-secondary:hover {
+  background: var(--color-kbd-bg);
+  color: var(--color-text);
+}
+
+/* ---- Overlay title (start screen) ---- */
+.overlay-title-text {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 4px;
+  color: var(--color-accent);
+}
+
+/* ---- Save score section ---- */
+.save-score-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.save-score-section.hidden {
+  display: none;
+}
+
+.player-name-input {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: 14px;
+  padding: 6px 12px;
+  text-align: center;
+  width: 180px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.player-name-input:focus {
+  border-color: var(--color-accent);
+}
+
+/* ---- High scores table ---- */
+.highscores-container {
+  width: 100%;
+  max-width: 340px;
+  margin-top: 4px;
+}
+
+.hs-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  color: var(--color-text);
+}
+
+.hs-table th {
+  color: var(--color-label);
+  font-size: 10px;
+  letter-spacing: 1px;
+  padding: 4px 6px;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.hs-table td {
+  padding: 5px 6px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.hs-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.hs-table tbody tr:hover {
+  background: var(--color-kbd-bg);
+}
+
+.hs-table tr.new-record td {
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+.hs-empty {
+  font-size: 12px;
+  color: var(--color-label);
+  text-align: center;
+  padding: 8px 0;
+}
+
+.hs-maxlines {
+  font-size: 11px;
+  color: var(--color-label);
+  text-align: right;
+  margin-top: 6px;
+}
+
+.hs-maxlines strong {
+  color: var(--color-text);
+}
+
+/* ---- Pause menu ---- */
+.pause-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+}
+
+.pause-menu.hidden {
+  display: none;
+}
+
+.pause-menu button {
+  background: var(--color-btn-bg);
+  color: var(--color-btn-text);
+  border: none;
+  border-radius: 6px;
+  padding: 10px 28px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 1px;
+  width: 200px;
+  transition: background 0.15s;
+}
+
+.pause-menu button:hover {
+  background: var(--color-btn-hover);
+}
+
+.pause-controls-panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 10px 16px;
+  width: 200px;
+}
+
+.pause-controls-panel.hidden {
+  display: none;
+}
+
+.pause-controls-panel ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pause-controls-panel li {
+  font-size: 12px;
+  color: var(--color-controls-text);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pause-level-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--color-text);
+}
+
+.pause-level-row label {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+#pause-start-level {
+  background: var(--color-kbd-bg);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.2s;
+}
+
+#pause-start-level:hover,
+#pause-start-level:focus {
+  border-color: var(--color-accent);
+  outline: none;
 }

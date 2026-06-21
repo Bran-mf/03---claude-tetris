@@ -24,6 +24,10 @@
           <span class="label">LEVEL</span>
           <span class="value" id="level">1</span>
         </div>
+        <div class="panel-section">
+          <span class="label">MAX COMBO</span>
+          <span class="value" id="max-combo">0</span>
+        </div>
 
         <div class="panel-section">
           <span class="label">NEXT</span>
@@ -52,14 +56,65 @@
           <span class="label">THEME</span>
           <button id="theme-btn" class="theme-toggle">Light</button>
         </div>
+
+        <div class="panel-section">
+          <span class="label">SKIN</span>
+          <select id="skin-select" class="skin-select">
+            <option value="retro">Retro</option>
+            <option value="neon">Neon</option>
+            <option value="pastel">Pastel</option>
+            <option value="pixel">Pixel Art</option>
+          </select>
+        </div>
       </aside>
     </div>
 
+    <!-- Start overlay (shown on page load) -->
+    <div id="start-overlay" class="overlay">
+      <div class="overlay-box">
+        <p class="overlay-title-text">TETRIS</p>
+        <div id="start-highscores" class="highscores-container"></div>
+        <button id="play-btn" class="overlay-btn">Jugar</button>
+        <button id="reset-scores-btn" class="overlay-btn overlay-btn-secondary">Resetear récords</button>
+      </div>
+    </div>
+
+    <!-- Game over / pause overlay -->
     <div id="overlay" class="overlay hidden">
       <div class="overlay-box">
         <p id="overlay-title">GAME OVER</p>
         <p id="overlay-score"></p>
-        <button id="restart-btn">Reiniciar</button>
+
+        <!-- Save score form (shown after game over) -->
+        <div id="save-score-section" class="save-score-section hidden">
+          <input id="player-name" class="player-name-input" type="text" maxlength="20" placeholder="Tu nombre" />
+          <button id="save-btn" class="overlay-btn">Guardar</button>
+        </div>
+
+        <!-- High-score table (shown after saving) -->
+        <div id="gameover-highscores" class="highscores-container"></div>
+
+        <button id="restart-btn" class="overlay-btn">Reiniciar</button>
+
+        <!-- Pause-specific controls (hidden when game over) -->
+        <div id="pause-menu" class="pause-menu hidden">
+          <button id="pause-resume-btn">Reanudar</button>
+          <button id="pause-restart-btn">Reiniciar</button>
+          <button id="pause-controls-btn">Ver controles</button>
+          <div id="pause-controls-panel" class="pause-controls-panel hidden">
+            <ul>
+              <li><kbd>←</kbd><kbd>→</kbd> mover</li>
+              <li><kbd>↑</kbd> / <kbd>X</kbd> rotar</li>
+              <li><kbd>↓</kbd> bajar</li>
+              <li><kbd>Space</kbd> caída dura</li>
+              <li><kbd>P</kbd> / <kbd>Esc</kbd> pausa</li>
+            </ul>
+          </div>
+          <div class="pause-level-row">
+            <label for="pause-start-level">Nivel inicial:</label>
+            <select id="pause-start-level"></select>
+          </div>
+        </div>
       </div>
     </div>
   </div>
